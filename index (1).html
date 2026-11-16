@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amit and Riya: Distance and Displacement</title>
+<style>
+:root{--bg:#f4f7fb;--ink:#1d2433;--btn:#0e7c8a;--btnink:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151821;--ink:#e8ecf5;--btn:#6fd3df;--btnink:#10222a}}
+:root[data-theme="dark"]{--bg:#151821;--ink:#e8ecf5;--btn:#6fd3df;--btnink:#10222a}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Trebuchet MS",Arial,sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:14px;padding:12px}
+svg{width:100%;max-width:1100px;height:auto;aspect-ratio:16/9;border-radius:10px;display:block;background:#fff}
+button{font:inherit;font-weight:700;padding:9px 22px;border:0;border-radius:999px;background:var(--btn);color:var(--btnink);cursor:pointer}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+</style>
+</head>
+<body>
+<svg id="s" viewBox="0 0 1600 900" role="img" aria-label="Animation: Amit walks 10 m west then 5 m north; Riya walks 10 m east then 5 m south">
+<defs><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L11 6 L1 11Z" fill="#1397a8"/></marker></defs>
+<g stroke="#1397a8" stroke-width="4" stroke-dasharray="4 12" stroke-linecap="round"><line x1="800" y1="70" x2="800" y2="830"/><line x1="90" y1="480" x2="1510" y2="480"/></g>
+<g font-size="36" font-weight="800" fill="#1397a8"><text x="800" y="52" text-anchor="middle">North</text><text x="800" y="880" text-anchor="middle">South</text><text x="20" y="492">West</text><text x="1580" y="492" text-anchor="end">East</text></g>
+
+<line id="bd" x1="500" y1="250" x2="500" y2="250" stroke="#1397a8" stroke-width="3" stroke-dasharray="14 10"/>
+<g stroke="#1397a8" stroke-width="6" stroke-linecap="round" marker-end="url(#ar)">
+<line id="a1" x1="800" y1="400" x2="800" y2="400" marker-end="url(#ar)"/>
+<line id="a2" x1="500" y1="400" x2="500" y2="400" marker-end="url(#ar)"/>
+<line id="r1" x1="800" y1="400" x2="800" y2="400" marker-end="url(#ar)"/>
+<line id="r2" x1="1100" y1="400" x2="1100" y2="400" marker-end="url(#ar)"/></g>
+
+<circle cx="800" cy="400" r="10" fill="#1d2433"/>
+<text x="800" y="438" text-anchor="middle" font-size="30" font-weight="800" fill="#1d2433">O</text>
+<text x="800" y="296" text-anchor="middle" font-size="28" font-weight="700" fill="#1d2433" id="st" opacity="0">Starting Point</text>
+<g font-size="30" font-weight="800" fill="#1d2433"><text x="450" y="410" text-anchor="end">A</text><text x="450" y="256" text-anchor="end">B</text><text x="1150" y="410">C</text><text x="1150" y="586">D</text></g>
+
+<g font-size="38" font-weight="800" fill="#1397a8">
+<text id="l1" x="650" y="372" text-anchor="middle" opacity="0">10 m</text>
+<text id="l2" x="950" y="372" text-anchor="middle" opacity="0">10 m</text>
+<text id="l3" x="440" y="336" text-anchor="end" opacity="0">5 m</text>
+<text id="l4" x="1160" y="506" opacity="0">5 m</text></g>
+
+<g id="wa"><g id="fa" transform="translate(0 55) scale(-0.36 0.36)"></g><text y="-84" text-anchor="middle" font-size="34" font-weight="800" fill="#1d2433">Amit</text></g>
+<g id="wr"><g id="fr" transform="translate(0 55) scale(0.36 0.36)"></g><text y="96" text-anchor="middle" font-size="34" font-weight="800" fill="#1d2433">Riya</text></g>
+
+<g id="sum" opacity="0"><rect x="330" y="690" width="940" height="150" rx="26" fill="#fff" stroke="#0e7c8a" stroke-width="4"/>
+<text x="800" y="750" text-anchor="middle" font-size="40" font-weight="800" fill="#1d2433">Distance travelled by each: 10 m + 5 m = 15 m</text>
+<text x="800" y="806" text-anchor="middle" font-size="40" font-weight="800" fill="#0e7c8a">Displacement of each: about 11.2 m, in opposite directions</text></g>
+</svg>
+<div style="display:flex;gap:10px"><button id="pp" type="button">Pause</button><button id="replay" type="button">Replay</button></div>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function fig(shirt,pants,pack,girl){
+  var leg='<rect x="-14" y="-135" width="28" height="118" rx="12" fill="'+pants+'"/><ellipse cx="10" cy="-10" rx="30" ry="12" fill="#fff" stroke="#333" stroke-width="2"/>';
+  return '<g class="legB">'+leg+'</g>'+
+  '<g class="armB"><rect x="-11" y="-232" width="22" height="96" rx="11" fill="#f0c49a"/><circle cy="-138" r="13" fill="#f0c49a"/></g>'+
+  (girl?'<ellipse cx="-36" cy="-288" rx="14" ry="34" fill="#2b1d17" transform="rotate(14 -36 -288)"/>':'')+
+  '<rect x="-64" y="-238" width="50" height="84" rx="16" fill="'+pack+'"/>'+
+  '<rect x="-34" y="-252" width="68" height="128" rx="22" fill="'+shirt+'"/>'+
+  '<g class="legF">'+leg+'</g>'+
+  (girl?'<path d="M-38 -140 L38 -140 L54 -70 L-54 -70Z" fill="#6b3fa0"/>':'')+
+  '<g class="armF"><rect x="-11" y="-232" width="22" height="96" rx="11" fill="'+shirt+'"/><circle cy="-138" r="13" fill="#f0c49a"/></g>'+
+  '<rect x="-8" y="-270" width="20" height="24" fill="#f0c49a"/>'+
+  '<circle cx="4" cy="-298" r="36" fill="#f0c49a"/><path d="M-34 -300 Q-30 -344 8 -340 Q40 -336 40 -306 Q20 -322 -4 -318 Q-24 -316 -34 -300Z" fill="#2b1d17"/>'+
+  '<circle cx="24" cy="-298" r="4" fill="#222"/>';
+}
+$("fa").innerHTML=fig("#3a8ee6","#14213d","#1f78c9",false);
+$("fr").innerHTML=fig("#e85d9a","#14213d","#a62d6b",true);
+function pose(id,sw){
+  var g=$(id),m=function(c){return g.querySelector("."+c)};
+  m("legF").setAttribute("transform","rotate("+sw+" 0 -130)");
+  m("legB").setAttribute("transform","rotate("+(-sw)+" 0 -130)");
+  m("armF").setAttribute("transform","rotate("+(-sw*0.9)+" 0 -225)");
+  m("armB").setAttribute("transform","rotate("+(sw*0.9)+" 0 -225)");
+}
+function seg(t,a,b){return clamp((t-a)/(b-a),0,1)}
+function lerp(a,b,p){return a+(b-a)*p}
+function set(id,x1,y1,x2,y2){var e=$(id);e.setAttribute("x1",x1);e.setAttribute("y1",y1);e.setAttribute("x2",x2);e.setAttribute("y2",y2)}
+function render(t){
+  var p1=seg(t,2,5),p2=seg(t,5.8,7.3);
+  var ax,ay,rx,ry;
+  if(p2<=0){ax=lerp(770,500,p1);ay=400;rx=lerp(830,1100,p1);ry=400}
+  else{ax=500;ay=lerp(400,250,p2);rx=1100;ry=lerp(400,550,p2)}
+  $("wa").setAttribute("transform","translate("+ax+" "+ay+")");
+  $("wr").setAttribute("transform","translate("+rx+" "+ry+")");
+  var mv=(t>2&&t<5)||(t>5.8&&t<7.3),sw=mv?Math.sin(t*11)*26:0;
+  pose("fa",sw);pose("fr",sw);
+  set("a1",800,400,Math.min(800,ax),400);
+  set("r1",800,400,Math.max(800,rx),400);
+  set("a2",500,400,500,p2>0?ay:400);
+  set("r2",1100,400,1100,p2>0?ry:400);
+  $("st").setAttribute("opacity",seg(t,0.3,1.2));
+  $("l1").setAttribute("opacity",seg(t,5,5.6));$("l2").setAttribute("opacity",seg(t,5,5.6));
+  $("l3").setAttribute("opacity",seg(t,7.3,7.9));$("l4").setAttribute("opacity",seg(t,7.3,7.9));
+  var pd=seg(t,8.3,10);
+  $("bd").setAttribute("x2",lerp(500,1100,pd));$("bd").setAttribute("y2",lerp(250,550,pd));
+  $("sum").setAttribute("opacity",seg(t,10.5,11.3));
+}
+var el=0,last=null,raf,playing=true,btn=$("pp");
+function tick(now){
+  if(last===null)last=now;
+  el=Math.min(el+(now-last)/1000,14);last=now;render(el);
+  if(el>=14){playing=false;btn.textContent="Play"}
+  else if(playing)raf=requestAnimationFrame(tick);
+}
+function run(){cancelAnimationFrame(raf);last=null;playing=true;btn.textContent="Pause";raf=requestAnimationFrame(tick)}
+btn.addEventListener("click",function(){
+  if(playing){playing=false;cancelAnimationFrame(raf);btn.textContent="Play"}
+  else{if(el>=14)el=0;run()}
+});
+$("replay").addEventListener("click",function(){el=0;run()});
+run();
+})();
+</script>
+</body>
+</html>
